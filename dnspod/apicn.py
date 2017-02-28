@@ -11,7 +11,7 @@ import re
 class ApiCn:
     def __init__(self, email, password, **kw):
         self.base_url = "dnsapi.cn"
-        
+
         self.params = dict(
             login_email=email,
             login_password=password,
@@ -19,7 +19,7 @@ class ApiCn:
         )
         self.params.update(kw)
         self.path = None
-    
+
     def request(self, **kw):
         self.params.update(kw)
         if not self.path:
@@ -29,7 +29,7 @@ class ApiCn:
         conn = httplib.HTTPSConnection(self.base_url)
         headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/json", "User-Agent": "dnspod-python/0.01 (im@chuangbo.li; DNSPod.CN API v2.8)"}
         conn.request("POST", self.path, urllib.urlencode(self.params), headers)
-        
+
         response = conn.getresponse()
         data = response.read()
         conn.close()
@@ -38,9 +38,9 @@ class ApiCn:
             return ret
         else:
             raise Exception(ret)
-    
+
     __call__ = request
-    
+
 class InfoVersion(ApiCn):
     pass
 
@@ -73,15 +73,15 @@ class _DomainApiBase(ApiCn):
 
 class DomainRemove(_DomainApiBase):
     pass
-        
+
 class DomainStatus(_DomainApiBase):
     def __init__(self, status, **kw):
         kw.update(dict(status=status))
         _DomainApiBase.__init__(self, **kw)
-        
+
 class DomainInfo(_DomainApiBase):
     pass
-        
+
 class DomainLog(_DomainApiBase):
     pass
 
@@ -89,7 +89,7 @@ class RecordType(ApiCn):
     def __init__(self, domain_grade, **kw):
         kw.update(dict(domain_grade=domain_grade))
         ApiCn.__init__(self, **kw)
-        
+
 class RecordLine(ApiCn):
     def __init__(self, domain_grade, **kw):
         kw.update(dict(domain_grade=domain_grade))
@@ -108,11 +108,20 @@ class RecordCreate(_DomainApiBase):
             kw.update(dict(mx=mx))
         _DomainApiBase.__init__(self, **kw)
 
-class RecordModify(RecordCreate):
-    def __init__(self, record_id, **kw):
-        kw.update(dict(record_id=record_id))
-        RecordCreate.__init__(self, **kw)
- 
+class RecordModify(_DomainApiBase):
+    def __init__(self, sub_domain, record_id, record_type, record_line, value, ttl, mx=None, **kw):
+        kw.update(dict(
+            sub_domain=sub_domain,
+            record_id=record_id,
+            record_type=record_type,
+            record_line=record_line,
+            value=value,
+            ttl=ttl,
+        ))
+        if mx:
+            kw.update(dict(mx=mx))
+        _DomainApiBase.__init__(self, **kw)
+
 class RecordList(_DomainApiBase):
     pass
 

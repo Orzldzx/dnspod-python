@@ -34,11 +34,10 @@ class ApiCn:
         data = response.read()
         conn.close()
         ret = json.loads(data)
-        return ret
-#        if ret.get("status", {}).get("code") == "1":
-#            return ret
-#        else:
-#            raise Exception(ret)
+        if ret.get("status", {}).get("code") == "1":
+            return ret
+        else:
+            raise Exception(ret)
 
     __call__ = request
 
@@ -123,6 +122,11 @@ class RecordModify(_DomainApiBase):
             kw.update(dict(mx=mx))
         _DomainApiBase.__init__(self, **kw)
 
+#class RecordModify(RecordCreate):
+#    def __init__(self, record_id, **kw):
+#        kw.update(dict(record_id=record_id))
+#        RecordCreate.__init__(self, **kw)
+
 class RecordList(_DomainApiBase):
     pass
 
@@ -132,7 +136,12 @@ class _RecordBase(_DomainApiBase):
         _DomainApiBase.__init__(self, **kw)
 
 class RecordRemove(_RecordBase):
-    pass
+    def __init__(self, domain_id, record_id, **kw):
+        kw.update(dict(
+            domain_id=domain_id,
+            record_id=record_id,
+        ))
+        _DomainApiBase.__init__(self, **kw)
 
 class RecordDdns(_DomainApiBase):
     def __init__(self, record_id, sub_domain, record_line, **kw):

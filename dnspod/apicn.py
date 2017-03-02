@@ -34,10 +34,11 @@ class ApiCn:
         data = response.read()
         conn.close()
         ret = json.loads(data)
-        if ret.get("status", {}).get("code") == "1":
-            return ret
-        else:
-            raise Exception(ret)
+        return ret
+#        if ret.get("status", {}).get("code") == "1":
+#            return ret
+#        else:
+#            raise Exception(ret)
 
     __call__ = request
 

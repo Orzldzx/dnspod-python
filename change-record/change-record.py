@@ -2,7 +2,6 @@
 # encoding: utf-8
 
 from dnspod.apicn import *
-from pprint import pprint
 import sys
 import re
 import json
